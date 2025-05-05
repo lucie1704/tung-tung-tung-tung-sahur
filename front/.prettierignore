@@ -1,0 +1,12 @@
+# Dossiers à ignorer
+node_modules
+.next
+build
+dist
+public
+
+# Fichiers à ignorer
+*.log
+package-lock.json
+yarn.lock
+pnpm-lock.yaml 
