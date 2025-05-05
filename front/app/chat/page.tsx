@@ -77,7 +77,7 @@ export default function ChatPage() {
               </ScrollArea>
 
             </div>
-              <MessageInput />
+            {user && <MessageInput />}
           </div>
 
           {/* Section Profil/Auth (Droite) */}
