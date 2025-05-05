@@ -1,6 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import api from "@/lib/api";
 
 interface User {
   id: string;
@@ -21,19 +22,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (username: string, password: string) => {
     try {
-      const response = await fetch('http://localhost:3000/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, password }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Login failed');
-      }
-
-      const data = await response.json();
+      const { data } = await api.post('auth/login', { username, password });
       setUser(data.user);
       localStorage.setItem('token', data.access_token);
     } catch (error) {
@@ -50,14 +39,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      // Verify token and get user data
-      fetch('http://localhost:3000/auth/profile', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-        .then((res) => res.json())
-        .then((data) => setUser(data))
+      api.get('auth/profile')
+        .then(({ data }) => setUser(data))
         .catch(() => logout());
     }
   }, []);

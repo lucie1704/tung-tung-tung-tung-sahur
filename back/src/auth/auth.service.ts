@@ -5,17 +5,14 @@ import { PrismaService } from 'src/prisma.service';
 import { UsersService } from 'src/users/users.service';
 
 interface registerData {
-  email: string;
+  username: string;
   password: string;
-  firstName: string;
-  lastName: string;
+  confirmPassword: string;
 }
 
 export interface JwtPayload {
   sub: string;
-  email: string;
-  firstName: string;
-  lastName: string;
+  username: string;
 }
 
 @Injectable()
@@ -26,17 +23,15 @@ export class AuthService {
     private prisma: PrismaService,
   ) {}
 
-  async signIn(email: string, pass: string): Promise<any> {
-    const user = await this.usersService.findOneByEmail(email);
+  async signIn(username: string, pass: string): Promise<any> {
+    const user = await this.usersService.findOneByUsername(username);
 
     if (!user?.password || !(await bcrypt.compare(pass, user?.password))) {
       throw new UnauthorizedException();
     }
     const payload: JwtPayload = {
       sub: user.id,
-      email: user.email,
-      firstName: user.firstName,
-      lastName: user.lastName,
+      username: user.username,
     };
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -49,13 +44,16 @@ export class AuthService {
   }
 
   async register(params: registerData) {
-    const { email, password, firstName, lastName } = params;
+    const { username, password, confirmPassword } = params;
+
+    if (password !== confirmPassword) {
+      throw new Error('Passwords do not match');
+    }
+
     return this.prisma.user.create({
       data: {
-        email,
+        username,
         password: await bcrypt.hash(password, 10),
-        firstName,
-        lastName,
       },
     });
   }

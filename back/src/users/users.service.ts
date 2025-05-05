@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
-import * as bcrypt from 'bcrypt';
 
 import { PrismaService } from '../prisma.service';
 
@@ -16,10 +15,10 @@ export class UsersService {
     });
   }
 
-  findOneByEmail(email: string) {
+  findOneByUsername(username: string) {
     return this.prisma.user.findFirst({
       where: {
-        email,
+        username,
       },
     });
   }
@@ -35,35 +34,6 @@ export class UsersService {
       data,
       where: {
         id,
-      },
-    });
-  }
-
-  async updatePassword(token: string, password: string) {
-    const foundToken = await this.prisma.token.findFirstOrThrow({
-      select: {
-        userId: true,
-      },
-      where: {
-        id: token,
-      },
-    });
-
-    await this.prisma.user.update({
-      data: {
-        password: await bcrypt.hash(password, 10),
-      },
-      where: {
-        id: foundToken.userId,
-      },
-    });
-
-    await this.prisma.token.update({
-      data: {
-        usedAt: new Date(),
-      },
-      where: {
-        id: token,
       },
     });
   }

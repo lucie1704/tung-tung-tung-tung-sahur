@@ -1,3 +1,5 @@
-export default function Dashboard() {
-  return <div>Home page</div>;
+import { redirect } from 'next/navigation';
+
+export default function Home() {
+  redirect('/chat');
 }

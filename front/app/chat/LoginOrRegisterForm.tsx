@@ -3,11 +3,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Eye, EyeOff } from 'lucide-react';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/auth-context';
 import api from "@/lib/api";
 
-export function LoginForm() {
+export function LoginOrRegisterForm() {
   const [activeTab, setActiveTab] = useState('login');
   const [username, setUsername] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
@@ -28,26 +28,30 @@ export function LoginForm() {
 
     try {
       await login(username, password);
-      void router.push('/dashboard');
+      router.push('/chat');
     } catch (error) {
       console.error('Login failed', error);
     }
   };
 
-  const handleRegister = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    const username = formData.get("username");
-    const password = formData.get("password");
-    const confirmPassword = formData.get("confirmPassword");
+  const handleRegister = async (e: React.FormEvent): Promise<void> => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget as HTMLFormElement);
+    const username = formData.get("username") as string;
+    const password = formData.get("password") as string;
+    const confirmPassword = formData.get("confirmPassword") as string;
 
-    await api.post("auth/register", {
-      username,
-      password,
-      confirmPassword
-    });
+    try {
+      await api.post("auth/register", {
+        username,
+        password,
+        confirmPassword
+      });
 
-    router.push("/login");
+      router.push("/chat");
+    } catch (error) {
+      console.error('Register failed', error);
+    }
   };
 
   return (
@@ -66,7 +70,7 @@ export function LoginForm() {
                   <label className="text-sm font-medium text-gray-700 block mb-1">
                     Nom d'utilisateur
                   </label>
-                  <Input value={username} onChange={e => setUsername(e.target.value)} />
+                  <Input name="username" value={username} onChange={e => setUsername(e.target.value)} />
                 </div>
                 <div>
                   <label className="text-sm font-medium text-gray-700 block mb-1">
@@ -74,6 +78,7 @@ export function LoginForm() {
                   </label>
                   <div className="relative">
                     <Input
+                      name="password"
                       type={showLoginPassword ? 'text' : 'password'}
                       placeholder="••••••••"
                       value={loginPassword}
@@ -107,7 +112,7 @@ export function LoginForm() {
                   <label className="text-sm font-medium text-gray-700 block mb-1">
                     Nom d'utilisateur
                   </label>
-                  <Input />
+                  <Input name="username" />
                 </div>
                 <div>
                   <label className="text-sm font-medium text-gray-700 block mb-1">
@@ -115,6 +120,7 @@ export function LoginForm() {
                   </label>
                   <div className="relative">
                     <Input
+                      name="password"
                       type={showRegisterPassword ? 'text' : 'password'}
                       placeholder="••••••••"
                       value={registerPassword}
@@ -141,6 +147,7 @@ export function LoginForm() {
                   </label>
                   <div className="relative">
                     <Input
+                      name="confirmPassword"
                       type={showConfirmPassword ? 'text' : 'password'}
                       placeholder="••••••••"
                       value={confirmPassword}
@@ -161,7 +168,7 @@ export function LoginForm() {
                     </Button>
                   </div>
                 </div>
-                <Button type="button" className="w-full bg-purple-600 hover:bg-purple-700">
+                <Button type="submit" className="w-full bg-purple-600 hover:bg-purple-700">
                   Créer un compte
                 </Button>
               </form>
