@@ -63,7 +63,7 @@ export function UserProfile() {
           onClick={logout}
         >
           <LogOut size={18} />
-          <span>Se déconnecter</span>
+          <span className="hidden md:inline">Se déconnecter</span>
         </Button>
       </div>
 

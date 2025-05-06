@@ -15,8 +15,8 @@ export default function ChatPage() {
   const { user } = useAuth();
   const { theme } = useThemeStore();
   const [messages, setMessages] = useState([
-    { id: 1, sender: 'user1', content: 'Bonjour, comment ça va?', timestamp: '10:30' },
-    { id: 2, sender: 'user2', content: 'Je vais bien, merci!', timestamp: '10:31' },
+    { id: 1, sender: 'carlili', content: 'Salut les amis bienvenue sur le chat comment ça va ?', timestamp: '10:30', theme: 'purple' },
+    { id: 2, sender: 'topiioo', content: 'Couci-couça mais on fait avec', timestamp: '10:31', theme: 'blue' },
   ]);
   const [typingUsers, setTypingUsers] = useState<Set<string>>(new Set());
 
@@ -28,7 +28,8 @@ export default function ChatPage() {
         id: Date.now(),
         sender: message.sender,
         content: message.text,
-        timestamp: new Date().toLocaleTimeString()
+        timestamp: new Date().toLocaleTimeString(),
+        theme: message.theme,
       }]);
     });
 
@@ -59,7 +60,7 @@ export default function ChatPage() {
           <div className="w-3/5 flex flex-col">
             <div className="p-4 border-b flex items-center space-x-2">
               <MessageSquare className={`text-${theme}-600`} size={20} />
-              <h2 className="font-bold text-lg">Chat Room {theme}</h2>
+              <h2 className="font-bold text-lg">Chat Room</h2>
             </div>
 
             <div className="flex-grow relative">

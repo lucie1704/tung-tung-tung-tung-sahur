@@ -8,14 +8,14 @@ interface MessageProps {
   sender: string;
   content: string;
   timestamp: string;
+  theme: string;
 }
 
-export function Message({ id, sender, content, timestamp }: MessageProps) {
+export function Message({ sender, content, timestamp, theme: senderTheme }: MessageProps) {
   const { user } = useAuth();
   const { theme } = useThemeStore();
   const isCurrentUser = user?.username === sender;
   
-  // Extraire uniquement l'heure et les minutes du timestamp
   const formatTime = (timeStr: string) => {
     return timeStr.split(':').slice(0, 2).join(':');
   };
@@ -26,7 +26,7 @@ export function Message({ id, sender, content, timestamp }: MessageProps) {
         className={`inline-flex items-center px-2.5 rounded-full text-sm font-medium ${
           isCurrentUser
             ? `bg-${theme}-600 text-white`
-            : 'bg-gray-200 text-gray-800'
+            : `bg-${senderTheme}-600 text-white`
         }`}
       >
         {sender}

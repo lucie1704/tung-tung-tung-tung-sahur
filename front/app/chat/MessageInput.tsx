@@ -43,7 +43,7 @@ export function MessageInput() {
     setIsLoading(true);
     socket
       .timeout(1000)
-      .emit('message', { sender: user.username, text: message }, () => {
+      .emit('message', { sender: user.username, text: message, theme: user.theme }, () => {
         setIsLoading(false);
         setMessage('');
       });
