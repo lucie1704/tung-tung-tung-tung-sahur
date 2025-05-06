@@ -29,7 +29,7 @@ export class UsersService {
     });
   }
 
-  updateUser(id: string, data: Prisma.UserCreateInput) {
+  updateUser(id: string, data: Partial<Prisma.UserCreateInput>) {
     return this.prisma.user.update({
       data,
       where: {

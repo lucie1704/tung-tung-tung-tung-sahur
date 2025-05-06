@@ -16,7 +16,7 @@ export class EventsGateway {
 
   @SubscribeMessage('message')
   handleMessage(client: Socket, payload: any) {
-    client.emit('message', payload);
+    this.server.emit('message', payload);
   }
 
   @SubscribeMessage('typing')
