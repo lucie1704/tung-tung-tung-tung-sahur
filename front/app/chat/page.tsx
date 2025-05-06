@@ -24,6 +24,7 @@ export default function ChatPage() {
       timestamp: '10:35',
     },
   ]);
+  const [typingUsers, setTypingUsers] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     socket.connect();
@@ -37,8 +38,21 @@ export default function ChatPage() {
       }]);
     });
 
+    socket.on('typing', ({ username, isTyping }) => {
+      setTypingUsers(prev => {
+        const newSet = new Set(prev);
+        if (isTyping) {
+          newSet.add(username);
+        } else {
+          newSet.delete(username);
+        }
+        return newSet;
+      });
+    });
+
     return () => {
       socket.off('message');
+      socket.off('typing');
       socket.disconnect();
     };
   }, []);
@@ -76,6 +90,11 @@ export default function ChatPage() {
                 </div>
               </ScrollArea>
 
+              {typingUsers.size > 0 && (
+                <div className="absolute bottom-0 left-0 right-0 px-2 py-1 bg-gray-50/50 text-sm text-gray-600">
+                  {Array.from(typingUsers).join(', ')} {typingUsers.size === 1 ? 'est en train' : 'sont en train'} d'écrire...
+                </div>
+              )}
             </div>
             {user && <MessageInput />}
           </div>

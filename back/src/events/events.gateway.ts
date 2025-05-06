@@ -3,7 +3,7 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
-import { Server } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 
 @WebSocketGateway({
   cors: {
@@ -15,7 +15,12 @@ export class EventsGateway {
   server: Server;
 
   @SubscribeMessage('message')
-  handleMessage(client: any, payload: any) {
-    this.server.emit('message', payload);
+  handleMessage(client: Socket, payload: any) {
+    client.emit('message', payload);
+  }
+
+  @SubscribeMessage('typing')
+  handleTyping(client: Socket, payload: any) {
+    client.broadcast.emit('typing', payload);
   }
 }
