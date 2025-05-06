@@ -1,11 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { User as UserIcon, LogOut, ChevronDown } from 'lucide-react';
 import { useAuth } from '@/context/auth-context';
 import { useSocketStore } from './socket';
+import { useThemeStore } from '../../store/theme-store';
+import api from "@/lib/api";
 
 const COLORS = [
   { value: 'purple', label: 'Violet', color: 'bg-purple-600' },
@@ -21,16 +23,28 @@ const COLORS = [
 export function UserProfile() {
   const { user, logout } = useAuth();
   const isConnected = useSocketStore((state) => state.isConnected);
-  const [selectedTheme, setSelectedTheme] = useState('purple');
+  const { theme, setTheme } = useThemeStore();
   const [isOpen, setIsOpen] = useState(false);
 
-  const selectedColor = COLORS.find(color => color.value === selectedTheme);
+  useEffect(() => {
+    if (user?.theme) {
+      setTheme(user.theme);
+    }
+  }, [user?.theme, setTheme]);
 
-  const handleThemeChange = (theme: string) => {
-    setSelectedTheme(theme);
+  const selectedColor = COLORS.find(color => color.value === theme);
+
+  const handleThemeChange = async (newTheme: string) => {
+    setTheme(newTheme);
     setIsOpen(false);
-    // TODO: Envoyer le changement de thème au backend
-    console.log('Thème changé:', theme);
+    
+    try {
+      await api.put(`users/${user?.id}`, {
+        theme: newTheme
+      });
+    } catch (error) {
+      console.error('Error updating theme:', error);
+    }
   };
 
   if (!user) return null;
@@ -39,7 +53,7 @@ export function UserProfile() {
     <div className="flex flex-col h-full">
       <div className="p-3 border-b flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          <UserIcon className="text-purple-600" size={20} />
+          <UserIcon className={`text-${theme}-600`} size={20} />
           <h2 className="font-bold text-lg">Mon Profil</h2>
         </div>
       
@@ -58,7 +72,7 @@ export function UserProfile() {
           <div className="relative">
             <Avatar className="h-16 w-16 mb-2">
               <AvatarImage src={user.avatar} />
-              <AvatarFallback className="bg-purple-600 text-lg">
+              <AvatarFallback className={`bg-${theme}-600 text-lg`}>
                 {user.username[0].toUpperCase()}
               </AvatarFallback>
             </Avatar>
@@ -96,7 +110,7 @@ export function UserProfile() {
                         key={color.value}
                         onClick={() => handleThemeChange(color.value)}
                         className={`w-12 h-12 rounded-md ${color.color} hover:opacity-80 transition-opacity ${
-                          selectedTheme === color.value ? 'ring-2 ring-offset-2 ring-gray-400' : ''
+                          theme === color.value ? 'ring-2 ring-offset-2 ring-gray-400' : ''
                         }`}
                         title={color.label}
                       />

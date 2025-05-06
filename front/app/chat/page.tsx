@@ -1,8 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { MessageSquare } from 'lucide-react';
 import { LoginOrRegisterForm } from './LoginOrRegisterForm';
@@ -11,18 +9,14 @@ import { UserProfile } from './UserProfile';
 import { MessageInput } from './MessageInput';
 import { Message } from './Message';
 import { socket } from './socket';
+import { useThemeStore } from '../../store/theme-store';
 
 export default function ChatPage() {
   const { user } = useAuth();
+  const { theme } = useThemeStore();
   const [messages, setMessages] = useState([
     { id: 1, sender: 'user1', content: 'Bonjour, comment ça va?', timestamp: '10:30' },
-    { id: 2, sender: 'user2', content: 'Très bien, merci! Et toi?', timestamp: '10:32' },
-    {
-      id: 3,
-      sender: 'user1',
-      content: 'Super! Je travaille sur un nouveau projet.',
-      timestamp: '10:35',
-    },
+    { id: 2, sender: 'user2', content: 'Je vais bien, merci!', timestamp: '10:31' },
   ]);
   const [typingUsers, setTypingUsers] = useState<Set<string>>(new Set());
 
@@ -58,14 +52,14 @@ export default function ChatPage() {
   }, []);
 
   return (
-    <div className="fixed inset-0 w-full h-full bg-purple-900" data-scroll="false">
+    <div className={`fixed inset-0 w-full h-full bg-${theme}-900`} data-scroll="false">
       <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
-        <div className="h-2/3 w-2/3 mx-4 flex overflow-hidden rounded-xl shadow-2xl bg-background">
-          {/* Section Chat (Gauche) */}
+      <div className="w-[90%] h-[90%] md:w-4/5 md:h-4/5 lg:w-2/3 lg:h-2/3 mx-auto flex overflow-hidden rounded-xl shadow-2xl bg-background">
+      {/* Section Chat (Gauche) */}
           <div className="w-3/5 flex flex-col">
             <div className="p-4 border-b flex items-center space-x-2">
-              <MessageSquare className="text-purple-600" size={20} />
-              <h2 className="font-bold text-lg">Chat Room</h2>
+              <MessageSquare className={`text-${theme}-600`} size={20} />
+              <h2 className="font-bold text-lg">Chat Room {theme}</h2>
             </div>
 
             <div className="flex-grow relative">

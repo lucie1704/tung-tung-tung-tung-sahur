@@ -6,11 +6,13 @@ import { Input } from '@/components/ui/input';
 import { Send } from 'lucide-react';
 import { socket } from './socket';
 import { useAuth } from '@/context/auth-context';
+import { useThemeStore } from '../../store/theme-store';
 
 export function MessageInput() {
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { user } = useAuth();
+  const { theme } = useThemeStore();
 
   const handleTyping = useCallback(() => {
     if (!user) return;
@@ -63,10 +65,10 @@ export function MessageInput() {
         <Button
           type="submit"
           size="icon"
-          className="absolute right-2 top-1/2 -translate-y-1/2 bg-transparent text-purple-600 hover:bg-transparent p-0 h-auto"
+          className={`absolute right-2 top-1/2 -translate-y-1/2 bg-transparent text-${theme}-600 hover:bg-transparent p-0 h-auto`}
           disabled={isLoading || !message.trim() || !user}
         >
-          <Send size={24} className="fill-purple-600" />
+          <Send size={24} className={`fill-${theme}-600`} />
         </Button>
       </div>
     </form>

@@ -7,6 +7,26 @@ module.exports = {
     './app/**/*.{ts,tsx}',
     './src/**/*.{ts,tsx}',
   ],
+  safelist: [
+    // Classes bg-[couleur] pour toutes les nuances
+    ...[50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950].flatMap(shade => 
+      ['purple', 'blue', 'green', 'red', 'orange', 'pink', 'indigo', 'teal'].map(color => 
+        `bg-${color}-${shade}`
+      )
+    ),
+    // Classes text-[couleur] pour toutes les nuances
+    ...[50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950].flatMap(shade => 
+      ['purple', 'blue', 'green', 'red', 'orange', 'pink', 'indigo', 'teal'].map(color => 
+        `text-${color}-${shade}`
+      )
+    ),
+    // Classes fill-[couleur] pour toutes les nuances
+    ...[50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950].flatMap(shade => 
+      ['purple', 'blue', 'green', 'red', 'orange', 'pink', 'indigo', 'teal'].map(color => 
+        `fill-${color}-${shade}`
+      )
+    ),
+  ],
   theme: {
     container: {
       center: true,
