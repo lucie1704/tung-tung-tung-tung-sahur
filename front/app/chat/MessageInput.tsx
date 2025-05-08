@@ -40,6 +40,7 @@ export function MessageInput() {
     e.preventDefault();
     if (!message.trim() || !user) return;
 
+    console.log('User theme:', user.theme);
     setIsLoading(true);
     socket
       .timeout(1000)

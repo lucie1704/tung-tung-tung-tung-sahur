@@ -21,7 +21,7 @@ const COLORS = [
 ];
 
 export function UserProfile() {
-  const { user, logout } = useAuth();
+  const { user, logout, updateUser } = useAuth();
   const isConnected = useSocketStore((state) => state.isConnected);
   const { theme, setTheme } = useThemeStore();
   const [isOpen, setIsOpen] = useState(false);
@@ -39,9 +39,11 @@ export function UserProfile() {
     setIsOpen(false);
     
     try {
-      await api.put(`users/${user?.id}`, {
+      const { data } = await api.put(`users/${user?.id}`, {
         theme: newTheme
       });
+      // Mettre à jour l'utilisateur avec les nouvelles données
+      updateUser({ theme: newTheme });
     } catch (error) {
       console.error('Error updating theme:', error);
     }

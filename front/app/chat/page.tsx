@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { MessageSquare } from 'lucide-react';
 import { LoginOrRegisterForm } from './LoginOrRegisterForm';
@@ -14,11 +14,20 @@ import { useThemeStore } from '../../store/theme-store';
 export default function ChatPage() {
   const { user } = useAuth();
   const { theme } = useThemeStore();
+  const messagesEndRef = useRef<HTMLDivElement>(null);
   const [messages, setMessages] = useState([
     { id: 1, sender: 'carlili', content: 'Salut les amis bienvenue sur le chat comment ça va ?', timestamp: '10:30', theme: 'purple' },
     { id: 2, sender: 'topiioo', content: 'Couci-couça mais on fait avec', timestamp: '10:31', theme: 'blue' },
   ]);
   const [typingUsers, setTypingUsers] = useState<Set<string>>(new Set());
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   useEffect(() => {
     socket.connect();
@@ -82,6 +91,7 @@ export default function ChatPage() {
                   {messages.map(msg => (
                     <Message key={msg.id} {...msg} />
                   ))}
+                  <div ref={messagesEndRef} />
                 </div>
               </ScrollArea>
 
